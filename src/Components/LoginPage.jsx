@@ -17,7 +17,6 @@ const LoginPage = () => {
       </div>
         <div className="formsection absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
                 p-10 w-5/12 bg-black flex flex-col">
-
           <h1 className="text-4xl font-bold text-white">Netflix Enter your info to sign in</h1>
           <p className="text-2xl text-white">Or get started with a new account.</p>
           <form className="flex flex-col">
