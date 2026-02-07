@@ -1,13 +1,10 @@
-
-import './App.css'
+import Body from './Components/Body'
 
 function App() {
 
   return (
     <>
-      <div>
-      <h1 className='text-2xl '>hello learners</h1>
-      </div>
+    <Body/>
     </>
   )
 }
