@@ -1,17 +1,30 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Header from "./Header";
+import { validateForm } from "../Utils/validateForm";
 
 const LoginPage = () => {
   const [signin, setsignin] = useState("Sign in")
+  const [errmsg , setErrmsg] = useState(null)
 
   const handleSignUp = () => {
-    console.log("signup clicked");
     setsignin("Sign Up")
   }
 
-  const handleSignIn = ()=>{
+  const handleSignIn = () => {
     setsignin("Sign in")
   }
+
+  const email = useRef(null)
+  const username = useRef(null)
+  const password = useRef(null)
+
+  const handleSubmit = () => {
+    const message = validateForm(email.current.value, password.current.value)
+    setErrmsg(message)
+
+  }
+
+
   return (
     <div className="relative h-screen w-screen">
       <div className="absolute z-10">
@@ -29,31 +42,36 @@ const LoginPage = () => {
         <div className="formsection absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
                 py-6 px-8  w-5/12 bg-black/70 flex flex-col">
           <h1 className="text-3xl font-bold p-2 text-white"> Enter your info to sign in</h1>
-          { signin === "Sign in" &&
-          <p className="text-lg text-white p-2 cursor-pointer" onClick={handleSignUp}>Or get started with a new account.</p>
+          {signin === "Sign in" &&
+            <p className="text-lg text-white p-2 cursor-pointer" onClick={handleSignUp}>Or get started with a new account.</p>
           }
-          <form className="flex flex-col">
+          <form className="flex flex-col" onSubmit={(e) => e.preventDefault()}>
             {signin === "Sign Up" &&
-            <input
-              type="text"
-              className=" text-white p-2 m-2 bg-gray-600"
-              placeholder="Enter your Name"
-            />
+              <input
+                ref={username}
+                type="text"
+                className=" text-white p-2 m-2 bg-gray-600"
+                placeholder="Enter your Name"
+              />
             }
             <input
+              ref={email}
               type="text"
               className=" text-white p-2 m-2 bg-gray-600"
               placeholder="Enter your Email Address"
             />
+            <p className="text-red-600 px-2">{errmsg}</p>
             <input
+              ref={password}
               type="password"
               className=" text-white p-2 m-2 bg-gray-600"
               placeholder="Enter your password"
             />
-            <button className="text-white bg-red-600 p-2 m-2 cursor-pointer text-lg">{signin === "Sign in" ? "Sign in" : "Sign Up"}</button>
+            <p className="text-red-600 px-2">{errmsg}</p>
+            <button className="text-white bg-red-600 p-2 m-2 cursor-pointer text-lg" onClick={handleSubmit}>{signin === "Sign in" ? "Sign in" : "Sign Up"}</button>
 
-            { signin === "Sign Up" &&
-            <p className="text-white p-2 m-2 text-lg cursor-pointer" onClick={handleSignIn}>already have an Account? Sign In now</p>
+            {signin === "Sign Up" &&
+              <p className="text-white p-2 m-2 text-lg cursor-pointer" onClick={handleSignIn}>already have an Account? Sign In now</p>
             }
 
           </form>
