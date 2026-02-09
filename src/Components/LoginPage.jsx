@@ -1,29 +1,50 @@
 import { useRef, useState } from "react";
 import Header from "./Header";
 import { validateForm } from "../Utils/validateForm";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../Utils/firebase";
 
 const LoginPage = () => {
-  const [signin, setsignin] = useState("Sign in")
-  const [errmsg , setErrmsg] = useState(null)
+  const [signin, setsignin] = useState("Sign in");
+  const [errmsg, setErrmsg] = useState(null);
 
   const handleSignUp = () => {
-    setsignin("Sign Up")
-  }
+    setsignin("Sign Up");
+  };
 
   const handleSignIn = () => {
-    setsignin("Sign in")
-  }
+    setsignin("Sign in");
+  };
 
-  const email = useRef(null)
-  const username = useRef(null)
-  const password = useRef(null)
+  const email = useRef(null);
+  const username = useRef(null);
+  const password = useRef(null);
 
   const handleSubmit = () => {
-    const message = validateForm(email.current.value, password.current.value)
-    setErrmsg(message)
+    const message = validateForm(email.current.value, password.current.value);
+    setErrmsg(message);
 
-  }
+    if (message) return;
 
+    // logic for adding the user in data base
+
+    if (signin === "Sign in") {
+    } else {
+      //sign up logic
+      createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
+        .then((userCredential) => {
+          // Signed up
+          const user = userCredential.user;
+          console.log('user: ', user);
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          // ..
+        });
+    }
+  };
 
   return (
     <div className="relative h-screen w-screen">
@@ -39,21 +60,31 @@ const LoginPage = () => {
           />
         </div>
         <div className="bg-black/50 absolute inset-0"></div>
-        <div className="formsection absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                py-6 px-8  w-5/12 bg-black/70 flex flex-col">
-          <h1 className="text-3xl font-bold p-2 text-white"> Enter your info to sign in</h1>
-          {signin === "Sign in" &&
-            <p className="text-lg text-white p-2 cursor-pointer" onClick={handleSignUp}>Or get started with a new account.</p>
-          }
+        <div
+          className="formsection absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
+                py-6 px-8  w-5/12 bg-black/70 flex flex-col"
+        >
+          <h1 className="text-3xl font-bold p-2 text-white">
+            {" "}
+            Enter your info to sign in
+          </h1>
+          {signin === "Sign in" && (
+            <p
+              className="text-lg text-white p-2 cursor-pointer"
+              onClick={handleSignUp}
+            >
+              Or get started with a new account.
+            </p>
+          )}
           <form className="flex flex-col" onSubmit={(e) => e.preventDefault()}>
-            {signin === "Sign Up" &&
+            {signin === "Sign Up" && (
               <input
                 ref={username}
                 type="text"
                 className=" text-white p-2 m-2 bg-gray-600"
                 placeholder="Enter your Name"
               />
-            }
+            )}
             <input
               ref={email}
               type="text"
@@ -68,12 +99,21 @@ const LoginPage = () => {
               placeholder="Enter your password"
             />
             <p className="text-red-600 px-2">{errmsg}</p>
-            <button className="text-white bg-red-600 p-2 m-2 cursor-pointer text-lg" onClick={handleSubmit}>{signin === "Sign in" ? "Sign in" : "Sign Up"}</button>
+            <button
+              className="text-white bg-red-600 p-2 m-2 cursor-pointer text-lg"
+              onClick={handleSubmit}
+            >
+              {signin === "Sign in" ? "Sign in" : "Sign Up"}
+            </button>
 
-            {signin === "Sign Up" &&
-              <p className="text-white p-2 m-2 text-lg cursor-pointer" onClick={handleSignIn}>already have an Account? Sign In now</p>
-            }
-
+            {signin === "Sign Up" && (
+              <p
+                className="text-white p-2 m-2 text-lg cursor-pointer"
+                onClick={handleSignIn}
+              >
+                already have an Account? Sign In now
+              </p>
+            )}
           </form>
         </div>
       </div>
