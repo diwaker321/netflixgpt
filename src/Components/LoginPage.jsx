@@ -1,10 +1,16 @@
 import { useRef, useState } from "react";
 import Header from "./Header";
 import { validateForm } from "../Utils/validateForm";
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 import { auth } from "../Utils/firebase";
+import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
+  const navigate = useNavigate();
   const [signin, setsignin] = useState("Sign in");
   const [errmsg, setErrmsg] = useState(null);
 
@@ -29,19 +35,43 @@ const LoginPage = () => {
     // logic for adding the user in data base
 
     if (signin === "Sign in") {
-    } else {
-      //sign up logic
-      createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
+
+      signInWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value,
+      )
         .then((userCredential) => {
-          // Signed up
+          // Signed in
           const user = userCredential.user;
-          console.log('user: ', user);
-          // ...
+          console.log("user: ", user);
+          navigate("/browse");
         })
         .catch((error) => {
           const errorCode = error.code;
           const errorMessage = error.message;
-          // ..
+        });
+    } else {
+      //sign up logic
+      createUserWithEmailAndPassword(
+        auth,
+        email.current.value,
+        password.current.value,
+      )
+        .then(async (userCredential) => {
+          // Signed up
+          const user = userCredential.user;
+          await updateProfile(user, {
+            displayName: username.current.value,
+            photoURL: "https://example.com/jane-q-user/profile.jpg",
+          })
+              await user.reload();
+              navigate("/browse");
+            
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
         });
     }
   };
