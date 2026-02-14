@@ -2,11 +2,37 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { signOut } from "firebase/auth";
 import { auth } from "../Utils/firebase";
+import { adduser, removeuser } from "../Utils/Store/userInfoSlice";
+import { onAuthStateChanged } from "firebase/auth";
+import { useEffect } from "react";
 
 const Header = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        await user.reload();
+        //when user sign in
+        const { uid, displayName, email, photoURL } = auth.currentUser;
+        dispatch(
+          adduser({
+            id: uid,
+            name: displayName,
+            email: email,
+            imageURL: photoURL,
+          }),
+        );
+        navigate("/browse")
+      } else {
+        //when user log out
+        dispatch(removeuser());
+        navigate("/")
+      }
+    });
+  }, []);
 
   const handleSignOut = () => {
     signOut(auth)
@@ -17,7 +43,6 @@ const Header = () => {
       .catch((error) => {
         // An error happened.
       });
-
   };
   return (
     <div className=" p-3 bg-gradient-to-b from-black flex items-center justify-between">

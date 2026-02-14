@@ -7,10 +7,8 @@ import {
   updateProfile,
 } from "firebase/auth";
 import { auth } from "../Utils/firebase";
-import { useNavigate } from "react-router-dom";
 
 const LoginPage = () => {
-  const navigate = useNavigate();
   const [signin, setsignin] = useState("Sign in");
   const [errmsg, setErrmsg] = useState(null);
 
@@ -44,8 +42,7 @@ const LoginPage = () => {
         .then((userCredential) => {
           // Signed in
           const user = userCredential.user;
-          console.log("user: ", user);
-          navigate("/browse");
+          console.log("user: ", user);     
         })
         .catch((error) => {
           const errorCode = error.code;
@@ -65,9 +62,7 @@ const LoginPage = () => {
             displayName: username.current.value,
             photoURL: "https://example.com/jane-q-user/profile.jpg",
           })
-              await user.reload();
-              navigate("/browse");
-            
+              await user.reload(); 
         })
         .catch((error) => {
           const errorCode = error.code;
